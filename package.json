@@ -9,6 +9,7 @@
   "author": "Metatavu Oy",
   "license": "AGPL-3.0",
   "dependencies": {
+    "command-line-args": "^4.0.1",
     "request": "^2.80.0",
     "twitter": "^1.7.0"
   }
