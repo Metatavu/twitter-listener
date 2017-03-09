@@ -23,13 +23,13 @@
 
   client.stream('statuses/filter', { track: options.tags.join(',') }, stream => {
     stream.on('data', tweet => {
-      console.log('Received tweet');
-
-      request(options.url, (error, response, body) => {
+      console.log(util.format('Received tweet with text: %s', tweet.text));
+      var url = util.format('%s?message=%s', options.url, encodeURIComponent(tweet.text));
+      request(url, (error, response, body) => {
         if(error) {
           console.error(error);
         } else {
-          console.log(util.format('Received [%s] %s from %s', response.statusCode, body, options.url));
+          console.log(util.format('Received [%s] %s from %s', response.statusCode, body, url));
         }
       });
     });
