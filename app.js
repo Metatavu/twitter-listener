@@ -21,22 +21,28 @@
     access_token_secret: config.twitter.access_token_secret
   });
 
-  client.stream('statuses/filter', { track: options.tags.join(',') }, stream => {
-    stream.on('data', tweet => {
-      console.log(util.format('Received tweet with text: %s', tweet.text));
-      var url = util.format('%s?message=%s', options.url, encodeURIComponent(tweet.text));
-      request(url, (error, response, body) => {
-        if(error) {
-          console.error(error);
-        } else {
-          console.log(util.format('Received [%s] %s from %s', response.statusCode, body, url));
-        }
-      });
-    });
+  var stream = client.stream('statuses/filter', { track: options.tags.join(',') });
 
-    stream.on('error', error => {
-      console.error(error);
+  stream.on('data', tweet => {
+    console.log(util.format('Received tweet with text: %s', tweet.text));
+    var url = util.format('%s?message=%s', options.url, encodeURIComponent(tweet.text));
+    request(url, (error, response, body) => {
+      if(error) {
+        console.error(error);
+      } else {
+        console.log(util.format('Received [%s] %s from %s', response.statusCode, body, url));
+      }
     });
+  });
+  
+  stream.on('error', error => {
+    console.error(error);
+    stream = client.stream('statuses/filter', { track: options.tags.join(',') });
+  });
+  
+  stream.on('end', () => {
+    console.error('Stream ended');
+    stream = client.stream('statuses/filter', { track: options.tags.join(',') });
   });
 
 })();
