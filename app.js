@@ -85,7 +85,7 @@
   });
 
   function sendPingToMachine(message) {
-    var url = util.format('%s?message=%s', options.url, encodeURIComponent(tweet.text));
+    var url = util.format('%s?message=%s', options.url, encodeURIComponent(message));
     request(url, (error, response, body) => {
       if(error) {
         console.error(error);
