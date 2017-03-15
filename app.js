@@ -36,14 +36,7 @@
 
   stream.on('data', tweet => {
     console.log(util.format('Received tweet with text: %s', tweet.text));
-    var url = util.format('%s?message=%s', options.url, encodeURIComponent(tweet.text));
-    request(url, (error, response, body) => {
-      if(error) {
-        console.error(error);
-      } else {
-        console.log(util.format('Received [%s] %s from %s', response.statusCode, body, url));
-      }
-    });
+    sendPingToMachine(tweet.text);
   });
   
   stream.on('error', error => {
@@ -63,13 +56,43 @@
   });
   
   app.post('/fbping', (req, res) => {
-    var body = req.body;
-    console.log(body);
+    var entries = req.body.entry;
+    if (entries && entries.length > 0) {
+      for (let i = 0; i < entries.length; i++) {
+        var changes = entries[i].changes;
+        for (let j = 0; j < changes.length; j++) {
+          var changeValue = changes[j].value;
+          if (changeValue && changeValue.verb == 'add' && changeValue.message) {
+            for (let n = 0; n < options.tags.length; n++) {
+              var tag = options.tags[n];
+              if (changeValue.message.includes('#' + tag)) {
+                console.log('Received webhook with message ' + changeValue.message);
+                sendPingToMachine(changeValue.message);
+                break;
+              }
+            }
+          }
+        }
+        
+      }
+    }
+    
     res.send('ok');
   });
   
   http.listen(options.port, function () {
     console.log(util.format('Listening to %s', options.port));
   });
+
+  function sendPingToMachine(message) {
+    var url = util.format('%s?message=%s', options.url, encodeURIComponent(tweet.text));
+    request(url, (error, response, body) => {
+      if(error) {
+        console.error(error);
+      } else {
+        console.log(util.format('Received [%s] %s from %s', response.statusCode, body, url));
+      }
+    });
+  }
 
 })();
