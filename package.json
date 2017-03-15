@@ -10,6 +10,7 @@
   "author": "Metatavu Oy",
   "license": "AGPL-3.0",
   "dependencies": {
+    "body-parser": "1.17.1",
     "command-line-args": "^4.0.1",
     "express": "4.15.2",
     "request": "^2.80.0",

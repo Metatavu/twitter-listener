@@ -11,7 +11,11 @@
   const express = require('express');
   const app = express();
   const http = require('http').Server(app);
+  const bodyParser = require('body-parser');
   const commandLineArgs = require('command-line-args');
+
+  app.use(bodyParser.json({limit: '50mb'}));
+  app.use(bodyParser.urlencoded({limit: '50mb'}));
 
   const optionDefinitions = [
     { name: 'url', alias: 'u', type: String },
@@ -57,7 +61,13 @@
     console.log(challenge);
     res.send(challenge);
   });
-
+  
+  app.post('/fbping', (req, res) => {
+    var body = req.body;
+    console.log(body);
+    res.send('ok');
+  });
+  
   http.listen(options.port, function () {
     console.log(util.format('Listening to %s', options.port));
   });
