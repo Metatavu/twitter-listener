@@ -53,8 +53,9 @@
   });
 
   app.get('/fbping', (req, res) => {
-    console.log('pong');
-    res.send('ok');
+    var challenge = req.query['hub.challenge'];
+    console.log(challenge);
+    res.send(challenge);
   });
 
   http.listen(options.port, function () {
