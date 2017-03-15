@@ -1,3 +1,6 @@
+/*jshint esversion: 6 */
+/* global __dirname */
+
 (function () {
   'use strict';
 
@@ -5,10 +8,14 @@
   const Twitter = require('twitter');
   const util = require('util');
   const config = require(__dirname + '/config.json');
+  const express = require('express');
+  const app = express();
+  const http = require('http').Server(app);
   const commandLineArgs = require('command-line-args');
 
   const optionDefinitions = [
     { name: 'url', alias: 'u', type: String },
+    { name: 'port', alias: 'p', type: Number },
     { name: 'tags', alias: 't', type: String, multiple: true }
   ];
 
@@ -43,6 +50,15 @@
   stream.on('end', () => {
     console.error('Stream ended');
     stream = client.stream('statuses/filter', { track: options.tags.join(',') });
+  });
+
+  app.get('/fbping', (req, res) => {
+    console.log('pong');
+    res.send('ok');
+  });
+
+  http.listen(options.port, function () {
+    console.log(util.format('Listening to %s', options.port));
   });
 
 })();
