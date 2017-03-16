@@ -32,22 +32,7 @@
     access_token_secret: config.twitter.access_token_secret
   });
 
-  var stream = client.stream('statuses/filter', { track: options.tags.join(',') });
-
-  stream.on('data', tweet => {
-    console.log(util.format('Received tweet with text: %s', tweet.text));
-    sendPingToMachine(tweet.text);
-  });
-  
-  stream.on('error', error => {
-    console.error(error);
-    stream = client.stream('statuses/filter', { track: options.tags.join(',') });
-  });
-  
-  stream.on('end', () => {
-    console.error('Stream ended');
-    stream = client.stream('statuses/filter', { track: options.tags.join(',') });
-  });
+  createTwitterStream();
 
   app.get('/fbping', (req, res) => {
     var challenge = req.query['hub.challenge'];
@@ -83,6 +68,25 @@
   http.listen(options.port, function () {
     console.log(util.format('Listening to %s', options.port));
   });
+
+  function createTwitterStream() {
+    var stream = client.stream('statuses/filter', { track: options.tags.join(',') });
+
+    stream.on('data', tweet => {
+      console.log(util.format('Received tweet with text: %s', tweet.text));
+      sendPingToMachine(tweet.text);
+    });
+
+    stream.on('error', error => {
+      console.error(error);
+      createTwitterStream();
+    });
+
+    stream.on('end', () => {
+      console.error('Stream ended');
+      createTwitterStream();
+    });
+  }
 
   function sendPingToMachine(message) {
     var url = util.format('%s?message=%s', options.url, encodeURIComponent(message));
