@@ -13,6 +13,8 @@
     "body-parser": "1.17.1",
     "command-line-args": "^4.0.1",
     "express": "4.15.2",
+    "fb": "1.1.1",
+    "mongodb": "2.2.24",
     "request": "^2.80.0",
     "twitter": "^1.7.0"
   }
