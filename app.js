@@ -53,13 +53,13 @@
               if (insertErr) {
                 console.error('Error inserting tag to database', insertErr);
               } else {
-                for (let n = 0; n < options.tags.length; n++) {
-                  if (tag.message.includes('#' + options.tags[n])) {
+                //for (let n = 0; n < options.tags.length; n++) {
+                  //if (tag.message.includes('#' + options.tags[n])) {
                     console.log('Received tag with message ' + tag.message);
                     sendPingToMachine(tag.message);
-                    break;
-                  }
-                } 
+                    //break;
+                  //}
+                //} 
               }
             });
           }
